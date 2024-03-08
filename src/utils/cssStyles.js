@@ -99,3 +99,4 @@ export const hideScrollbarX = {
     display: 'none',
   },
 };
+
