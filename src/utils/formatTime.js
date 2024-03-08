@@ -25,3 +25,7 @@ export function fToNow(date) {
       })
     : '';
 }
+
+export function minutesToHours(minutes) {
+  return `${(minutes - (minutes % 60)) / 60}h ${minutes % 60}min`;
+}
