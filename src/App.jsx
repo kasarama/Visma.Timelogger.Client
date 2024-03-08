@@ -19,6 +19,7 @@ App.propTypes = {
 };
 function App({ user, removeUser }) {
   const [ignore, setIgnore] = useState(true);
+  
   async function authorizeUser() {
     if (user.loggedIn) {
       authorize({ userName: user.userName, roles: user.roles })

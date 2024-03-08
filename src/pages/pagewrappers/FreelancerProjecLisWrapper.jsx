@@ -4,7 +4,6 @@ import FreelancerProjecLis from '../FreelancerProjecLis';
 
 export default function FreelancerProjecLisWrapper() {
   const result = useData('getListProjectOverview');
-
   if (result.error) {
     return result.error;
   }

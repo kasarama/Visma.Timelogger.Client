@@ -10,9 +10,11 @@ export const useData = (source, parameter) => {
   useEffect(() => {
     dataSources[source](parameter)
       .then((res) => {
+        console.log(res);
         setState({ data: res.data, error: undefined });
       })
       .catch((err) => {
+        console.log(err);
         const status = err.response && err.response.status ? err.response.status : 0;
         switch (status) {
           case 401: {

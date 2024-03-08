@@ -2,26 +2,7 @@ import axios from 'axios';
 import { filter } from 'lodash';
 import { format, parseISO } from 'date-fns';
 import { mockPostLogin, mockPostLogout, mockPostAuthorize } from '../_mock/mockFunctions';
-import { urlAuth,  urlProjects } from './settings';
-
-export const errorPrompt = (err) => {
-  const errorsObjects = err.errors || {};
-  let errorList = [];
-  Object.values(errorsObjects).forEach((v) => {
-    errorList = errorList.concat(v);
-  });
-
-  return (
-    <div>
-      <p>{err.message}</p>
-      <dl key="errorList">
-        {errorList.map((e, i) => (
-          <dt key={`e_${i}`}>{e}</dt>
-        ))}
-      </dl>
-    </div>
-  );
-};
+import { urlAuth, urlProjects } from './settings';
 
 axios.defaults.withCredentials = true;
 // Projects
@@ -33,7 +14,7 @@ export const logout = () => mockPostLogout(urlAuth.urlLogout);
 
 export const authorize = (credentials) => mockPostAuthorize(urlAuth.urlAuthorize, credentials);
 
-// Mocked Auth Requests
+// Auth Requests
 // export const login = (credentials) => axios.post(urlAuth.urlLogin, credentials);
 // export const logout = () => axios.post(urlAuth.urlLogout);
 // export const authorize = (credentials) => axios.post(urlAuth.urlAuthorize, credentials);
@@ -41,7 +22,7 @@ export const authorize = (credentials) => mockPostAuthorize(urlAuth.urlAuthorize
 // Project Requests
 const getListProjectOverview = () =>
   axios.get(urlProjects.urlGetListProjectOverview, {
-    headers: { User: localStorage.getItem('token') },
+    headers: { User: "localStorage.getItem('token') " },
   });
 const getProjectOverview = (projectId) =>
   axios.get(`${urlProjects.urlGetProjectOverview}${projectId}`, {
@@ -53,13 +34,11 @@ export const postCreateTimeRecord = (timeRecord) =>
     headers: { User: localStorage.getItem('token') },
   });
 
-
 // useDataSources
 export const dataSources = {
   authorize,
   getListProjectOverview,
   getProjectOverview,
- 
 };
 
 // functions
