@@ -2,7 +2,7 @@ import { format, parseISO } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
-export function fDate(date: Date, newFormat: string): string {
+export function fDate(date: Date, newFormat?: string): string {
   const fm = newFormat || 'dd MMM yyyy';
 
   return date ? format(new Date(date), fm) : '';
