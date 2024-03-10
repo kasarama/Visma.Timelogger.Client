@@ -1,14 +1,25 @@
 import { TLoginCredentials, TAuthorizeCredentials } from '../types/userTypes';
 
-const users: any = {
+interface IUser {
+  name: string;
+  token: string;
+}
+
+interface IUsers {
+  [key: string]: IUser;
+}
+
+const users: IUsers = {
   freelancer1: { name: 'Magdalena', token: 'freelancer1' },
   freelancer2: { name: 'Alexandra', token: 'freelancer2' },
   customer1: { name: 'Dwayne', token: 'customer1' },
   customer2: { name: 'Adrian', token: 'customer2' },
 };
+
 const newExpirationTime = () => new Number(new Date().getTime() + 1000 * 60 * 20).toString();
 
 export const mockPostLogin = (url: string, credentials: TLoginCredentials) => {
+  console.log(url);
   return new Promise((resolve, reject) => {
     const randomInteger = Math.floor(Math.random() * 20);
     setTimeout(() => {
@@ -48,6 +59,7 @@ export const mockPostLogin = (url: string, credentials: TLoginCredentials) => {
 };
 
 export const mockPostLogout = (url: string) => {
+  console.log(url);
   return new Promise((resolve, reject) => {
     const randomInteger = Math.floor(Math.random() * 20);
     setTimeout(() => {
@@ -77,7 +89,9 @@ export const mockPostLogout = (url: string) => {
   });
 };
 
-export const mockPostAuthorize = (url: string, credentials: any) => {
+export const mockPostAuthorize = (url: string, credentials: TAuthorizeCredentials) => {
+  console.log(url, credentials);
+
   const tokenExpirationTime = new Number(localStorage.getItem('tokenExpirationTime'));
   return new Promise((resolve, reject) => {
     const randomInteger = Math.floor(Math.random() * 100);

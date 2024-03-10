@@ -1,25 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AxiosResponse, AxiosError } from 'axios';
 
+// @mui
+import { Alert } from '@mui/material';
 // components
-import { useDataSources, TState } from '../utils/api';
+import { dataSources, TState } from '../utils/apiFacade';
+import { TProject } from '@/types/projectTypes';
 
 export const useData = (source: string, parameter?: string) => {
   const [state, setState] = useState<TState>();
-  useEffect(() => {
-    useDataSources(setState, source, parameter);
-  }, [source]);
-  return { ...state };
-};
+  const navigate = useNavigate();
 
-/*
- useEffect(() => {
+  useEffect(() => {
     dataSources[source](parameter)
-      .then((res:TApiResponse<any>) => {
-        console.log(res);
-        setState({ data: res.data, error: undefined });
+      .then((res: AxiosResponse<TProject | TProject[]>) => {
+        setState({ success: true, data: res.data });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((err: AxiosError) => {
         const status = err.response && err.response.status ? err.response.status : 0;
         switch (status) {
           case 401: {
@@ -31,19 +29,16 @@ export const useData = (source: string, parameter?: string) => {
             return;
           }
           case 400: {
-            setState({
-              data: undefined,
-              error: <Alert severity="warning">Bad Request</Alert>,
-            });
+            setState({ success: false, error: <Alert severity="warning">Bad Request</Alert> });
             return;
           }
           default:
             setState({
-              data: undefined,
+              success: false,
               error: <Alert severity="error">SERVER ERROR</Alert>,
             });
         }
       });
   }, [source]);
-
-  */
+  return { ...state };
+};

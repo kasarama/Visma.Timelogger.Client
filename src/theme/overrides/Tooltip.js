@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-export default function Tooltip(theme: any) {
+export default function Tooltip(theme) {
   return {
     MuiTooltip: {
       styleOverrides: {

@@ -1,4 +1,4 @@
-import React, { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Container, Typography } from '@mui/material';
@@ -24,8 +24,10 @@ const StyledContent = styled('div')(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
-
-export default function TestPage({ title }) {
+type TTestPageProps = {
+  title: string;
+};
+export default function TestPage({ title }: TTestPageProps) {
   return (
     <>
       <Helmet>

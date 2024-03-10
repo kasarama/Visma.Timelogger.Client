@@ -1,5 +1,4 @@
-import React from 'react';
-
+import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 // @mui
 import { CssBaseline } from '@mui/material';
@@ -10,14 +9,15 @@ import shadows from './shadows';
 import typography from './typography';
 import GlobalStyles from './globalStyles';
 import customShadows from './customShadows';
-import componentsOverride from './overrides/index';
+import componentsOverride from './overrides';
 
 // ----------------------------------------------------------------------
 
-// ThemeProvider.propTypes = {
-//   children: PropTypes.node,
-// };
-const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+ThemeProvider.propTypes = {
+  children: PropTypes.node,
+};
+
+export default function ThemeProvider({ children }) {
   const themeOptions = useMemo(
     () => ({
       palette,
@@ -41,6 +41,4 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       </MUIThemeProvider>
     </StyledEngineProvider>
   );
-};
-
-export default ThemeProvider;
+}

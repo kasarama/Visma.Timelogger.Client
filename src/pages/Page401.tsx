@@ -1,4 +1,4 @@
-import React, { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Typography, Container, Box } from '@mui/material';

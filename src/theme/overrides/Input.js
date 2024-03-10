@@ -2,7 +2,7 @@ import { alpha } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export default function Input(theme: any) {
+export default function Input(theme) {
   return {
     MuiInputBase: {
       styleOverrides: {

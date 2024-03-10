@@ -1,24 +1,18 @@
-import React from 'react';
-
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios';
 
 import { mockPostLogin, mockPostLogout, mockPostAuthorize } from '../_mock/mockFunctions';
 import { urlAuth, urlProjects } from './settings';
-
-// @mui
-import { Alert } from '@mui/material';
 
 // types
 import { TLoginCredentials, TAuthorizeCredentials, TAppUser } from '../types/userTypes';
 import { TCreateTimeRecordRequest, TProject } from '../types/projectTypes';
 
-const navigate = useNavigate();
-
 axios.defaults.withCredentials = true;
 
 // Mocked Auth Requests
-export const login = (credentials: TLoginCredentials) => mockPostLogin(urlAuth.urlLogin, credentials);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const login = (credentials: TLoginCredentials): Promise<any> => mockPostLogin(urlAuth.urlLogin, credentials);
 
 export const logout = () => mockPostLogout(urlAuth.urlLogout);
 
@@ -45,6 +39,7 @@ export const postCreateTimeRecord = (timeRecord: TCreateTimeRecordRequest): Prom
   });
 
 // useDataSources
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const dataSources: any = {
   authorize: authorize,
   getListProjectOverview: getListProjectOverview,
@@ -53,36 +48,9 @@ export const dataSources: any = {
 
 export type TState = {
   success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
   error?: JSX.Element;
-};
-export const useDataSources = async (setState: (state: TState) => void, source: string, parameter?: any) => {
-  dataSources[source](parameter)
-    .then((res: AxiosResponse<any>) => {
-      setState({ success: true, data: res.data });
-    })
-    .catch((err: AxiosError) => {
-      const status = err.response && err.response.status ? err.response.status : 0;
-      switch (status) {
-        case 401: {
-          navigate('/401');
-          return;
-        }
-        case 403: {
-          navigate('/403');
-          return;
-        }
-        case 400: {
-          setState({ success: false, error: <Alert severity="warning">Bad Request</Alert> });
-          return;
-        }
-        default:
-          setState({
-            success: false,
-            error: <Alert severity="error">SERVER ERROR</Alert>,
-          });
-      }
-    });
 };
 
 export const authorizeUser = async (user: TAppUser, removeUser: () => void) => {

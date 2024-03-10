@@ -13,5 +13,7 @@ export function minutesToHours(minutes: number): string {
 }
 
 export function formatDateToLocale(date: string): string {
-  return format(parseISO(date), 'dd-MM-yyyy');
+  const x: string = format(parseISO(date), 'dd-MM-yyyy');
+  console.log(x);
+  return x;
 }

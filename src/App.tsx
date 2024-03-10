@@ -1,11 +1,10 @@
-import React from 'react';
 import { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { connect } from 'react-redux';
 
 // routes
-import Router from './routes';
+import Router from './Router';
 // theme
 import ThemeProvider from './theme';
 
@@ -15,7 +14,7 @@ import { TAppUser } from './types/userTypes';
 // components
 import ScrollToTop from './components/scroll-to-top';
 import { resetUser } from './actions';
-import { authorizeUser } from './utils/api';
+import { authorizeUser } from './utils/apiFacade';
 
 // ----------------------------------------------------------------------
 type TAppProps = {

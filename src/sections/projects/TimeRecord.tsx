@@ -1,11 +1,9 @@
-import React from 'react';
-
 // @mui
 import { Typography } from '@mui/material';
 import { TimelineDot, TimelineItem, TimelineContent, TimelineSeparator, TimelineConnector } from '@mui/lab';
 
 // utils
-import { fDate, minutesToHours } from '../../utils/formatTime';
+import { formatDateToLocale, minutesToHours } from '../../utils/formatTime';
 
 // types
 import { TTimeRecord } from '../../types/projectTypes';
@@ -25,7 +23,7 @@ export const TimeRecord = ({ item, isLast, isActive }: TTimeRecordProps) => {
       </TimelineSeparator>
 
       <TimelineContent>
-        <Typography variant="subtitle2">{fDate(startTime)}</Typography>
+        <Typography variant="subtitle2">{formatDateToLocale(startTime)}</Typography>
         <Typography variant="h6"> {minutesToHours(durationMinutes)}</Typography>
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
           id: {id}

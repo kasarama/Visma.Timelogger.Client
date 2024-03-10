@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useData } from '../../hooks/UseData';
 // components
@@ -11,7 +10,7 @@ export default function FProjectOverviewPageWrapper() {
   const result = useData('getProjectOverview', projectId);
 
   if (!result.success) {
-    return result.error;
+    return result.error ? result.error : <p>'Error reading data'</p>;
   }
 
   return <FProjectOverviewPage data={result.data} />;

@@ -1,14 +1,14 @@
 // ----------------------------------------------------------------------
 
-export function remToPx(value: any) {
+export function remToPx(value) {
   return Math.round(parseFloat(value) * 16);
 }
 
-export function pxToRem(value: any) {
+export function pxToRem(value) {
   return `${value / 16}rem`;
 }
 
-export function responsiveFontSizes({ sm, md, lg }: any) {
+export function responsiveFontSizes({ sm, md, lg }) {
   return {
     '@media (min-width:600px)': {
       fontSize: pxToRem(sm),

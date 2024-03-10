@@ -1,6 +1,6 @@
 export type TTimeRecord = {
   id: string;
-  startTime: Date;
+  startTime: string;
   durationMinutes: number;
 };
 
@@ -8,8 +8,8 @@ export type TProject = {
   id: string;
   freelancerId: string;
   customerId: string;
-  startTime: Date;
-  deadline: Date;
+  startTime: string;
+  deadline: string;
   timeRegistrations: TTimeRecord[];
   isActive: boolean;
   name: string;

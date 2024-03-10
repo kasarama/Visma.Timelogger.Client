@@ -11,12 +11,12 @@ import Autocomplete from './Autocomplete';
 
 // ----------------------------------------------------------------------
 
-export default function ComponentsOverrides(theme: any) {
+export default function ComponentsOverrides(theme) {
   return Object.assign(
     Card(theme),
     Table(theme),
     Input(theme),
-    Paper(),
+    Paper(theme),
     Button(theme),
     Tooltip(theme),
     Backdrop(theme),

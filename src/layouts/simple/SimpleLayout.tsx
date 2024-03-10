@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -25,7 +24,7 @@ export default function SimpleLayout() {
   return (
     <>
       <StyledHeader>
-        <Logo disabledLink={false}/>
+        <Logo disabledLink={false} />
       </StyledHeader>
 
       <Outlet />

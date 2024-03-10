@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef, MutableRefObject } from 'react';
 
 // @mui
 import { Card, CardHeader, CardContent } from '@mui/material';
@@ -30,14 +30,17 @@ export default function TimeRegistrations({
   ...other
 }: TTimeRegistrationsProps) {
   const [records, setRecords] = useState(sortTimeRecordsByDate(list));
-  const cardRef = useRef(null);
+
+  const cardRef: MutableRefObject<null> = useRef(null);
+
+  // const cardRef: any = useRef(null);
 
   const addItemsToItemList = (newRecords: TTimeRecord[]) => {
     setRecords(updateTimeRegistrationsView(records, newRecords));
   };
 
   return (
-    <Card ref={cardRef} {...other}>
+    <Card {...other} ref={cardRef}>
       <CardHeader title={'Time Registrations'} subheader={`Total time: ${calculateTotalTime(records)}`} />
 
       <CardContent

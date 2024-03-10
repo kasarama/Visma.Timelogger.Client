@@ -1,8 +1,7 @@
 import { filter } from 'lodash';
-import { format, parseISO } from 'date-fns';
 
 // types
-import { TTimeRecord } from '../types/projectTypes';
+import { TProject, TTimeRecord } from '../types/projectTypes';
 import { minutesToHours } from './formatTime';
 
 export const hasAllowedRoles = (allowedRoles: string[], userRoles: string[]) => {
@@ -15,10 +14,8 @@ export const hasAllowedRoles = (allowedRoles: string[], userRoles: string[]) => 
   return isAllowed;
 };
 
-export const formatDateToLocale = (date: string) => format(parseISO(date), 'dd-MM-yyyy');
-
 // ************************ Table Sort ********************************************
-export const descendingComparator = (a: any, b: any, orderBy: any) => {
+const descendingComparator = (a: TProject, b: TProject, orderBy: keyof TProject): number => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -28,26 +25,24 @@ export const descendingComparator = (a: any, b: any, orderBy: any) => {
   return 0;
 };
 
-export const getComparator = (order: string, orderBy: string) =>
-  order === 'desc'
-    ? (a: any, b: any) => descendingComparator(a, b, orderBy)
-    : (a: any, b: any) => -descendingComparator(a, b, orderBy);
+export const getComparator = (order: 'asc' | 'desc', orderBy: keyof TProject): ((a: TProject, b: TProject) => number) =>
+  order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
 export const applySortFilter = (
-  array: any[],
-  comparator: (order: string, orderBy: string) => number,
+  array: TProject[],
+  comparator: (a: TProject, b: TProject) => number,
   query: string
-) => {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
+): TProject[] => {
+  const stabilizedThis = array.map((el, index) => ({ value: el, index }));
+  stabilizedThis.sort((a, b) => comparator(a.value, b.value));
+
+  const sortedArray = stabilizedThis.map((el) => el.value);
+
   if (query) {
-    return filter(array, (item) => item.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(sortedArray, (item: TProject) => item.name.toLowerCase().includes(query.toLowerCase()));
   }
-  return stabilizedThis.map((el) => el[0]);
+
+  return sortedArray;
 };
 
 // ***************************************************************
@@ -61,12 +56,11 @@ export const secondsToTime = (totalSeconds: number) => {
 };
 
 export function sortTimeRecordsByDate(timeRecords: TTimeRecord[]): TTimeRecord[] {
-  return timeRecords.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+  return timeRecords.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 }
 
-export const updateTimeRegistrationsView = (newRecords: TTimeRecord[], actualRecords: TTimeRecord[]) => {
-  return sortTimeRecordsByDate(actualRecords.concat(newRecords));
-};
+export const updateTimeRegistrationsView = (newRecords: TTimeRecord[], actualRecords: TTimeRecord[]) =>
+  sortTimeRecordsByDate(actualRecords.concat(newRecords));
 
 export const calculateTotalTime = (timeRecords: TTimeRecord[]) =>
   minutesToHours(timeRecords.reduce((sum, record) => sum + record.durationMinutes, 0));

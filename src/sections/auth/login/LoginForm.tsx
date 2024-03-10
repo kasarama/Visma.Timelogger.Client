@@ -18,20 +18,25 @@ import { LoadingButton } from '@mui/lab';
 
 // components
 import { setUser, resetUser } from '../../../actions';
-import { login } from '../../../utils/api';
+import { login } from '../../../utils/apiFacade';
 import Iconify from '../../../components/iconify';
-import { TAppUser } from '../../../types/userTypes';
+import { TAppUser, TLoginCredentials } from '../../../types/userTypes';
 
 // ----------------------------------------------------------------------
+const EMPTY_STRING = '';
+const initCredentials: TLoginCredentials = {
+  userName: EMPTY_STRING,
+  password: EMPTY_STRING,
+};
+
 type TLoginFormProps = {
   saveUser: (user: TAppUser) => void;
   deleteUser: () => void;
 };
-function LoginForm({ saveUser, deleteUser }:TLoginFormProps) {
-  const EMPTY_STRING = '';
+function LoginForm({ saveUser, deleteUser }: TLoginFormProps) {
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({});
+  const [credentials, setCredentials] = useState<TLoginCredentials>(initCredentials);
   const [userName, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isFormDisabled, setFormDisabled] = useState(false);
@@ -42,7 +47,7 @@ function LoginForm({ saveUser, deleteUser }:TLoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [openToolTip, setOpenToolTip] = useState(false);
 
-  const onChange = (event) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setError(EMPTY_STRING);
     setCredentials({
       ...credentials,
@@ -50,7 +55,7 @@ function LoginForm({ saveUser, deleteUser }:TLoginFormProps) {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setError(EMPTY_STRING);
     if (!validateCredentials()) {
@@ -66,7 +71,7 @@ function LoginForm({ saveUser, deleteUser }:TLoginFormProps) {
     return credentials.userName && credentials.password;
   };
   const clearData = () => {
-    setCredentials({});
+    setCredentials(initCredentials);
     setFormDisabled(false);
     setPassword(EMPTY_STRING);
     setUsername(EMPTY_STRING);
@@ -79,7 +84,7 @@ function LoginForm({ saveUser, deleteUser }:TLoginFormProps) {
       login(credentials)
         .then((res) => {
           navigate('/');
-          const user = { roles: res.data.roles, userName: res.data.userName, token: res.data.token };
+          const user = { roles: res.data.roles, userName: res.data.userName, loggedIn: true };
           setFormDisabled(true);
           saveUser(user);
         })

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 // layouts
 import DashboardLayout from './layouts/dashboard';
@@ -20,10 +20,9 @@ import { ProtectedRoute } from './components/protected-route';
 
 // ----------------------------------------------------------------------
 
-type TRouterProps = {
-  user: TAppUser;
-};
-const Router = ({ user }: TRouterProps) => {
+const Router = () => {
+  const user = useSelector((state: { user: TAppUser }) => state.user);
+
   const simpleLayout = {
     element: <SimpleLayout />,
     children: [
@@ -43,7 +42,19 @@ const Router = ({ user }: TRouterProps) => {
     ],
   };
 
-  const roleIndexPage = {
+  type RolePage = {
+    element: ReactElement;
+    path?: string;
+    index?: boolean;
+  };
+
+  type RoleIndexPage = {
+    freelancer: RolePage[];
+    customer: RolePage[];
+    common: RolePage[];
+  };
+
+  const roleIndexPage: RoleIndexPage = {
     freelancer: [
       { element: <Navigate to="/freelancer" />, index: true },
       { path: '/freelancer', element: <TestPage title={'Freelancer Start Page'} />, index: true },
@@ -145,7 +156,4 @@ const Router = ({ user }: TRouterProps) => {
   return routes;
 };
 
-const mapStateToProps = (state: { loggedIn: boolean; user: TAppUser }) => ({
-  user: state.user,
-});
-export default connect(mapStateToProps)(Router);
+export default Router;

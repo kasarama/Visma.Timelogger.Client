@@ -13,3 +13,8 @@ export type TAppUser = {
   roles: string[];
   loggedIn: boolean;
 };
+
+export type TUserLoginResponse = {
+  userName: string;
+  roles: string[];
+};

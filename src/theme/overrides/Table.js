@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-export default function Table(theme: any) {
+export default function Table(theme) {
   return {
     MuiTableCell: {
       styleOverrides: {

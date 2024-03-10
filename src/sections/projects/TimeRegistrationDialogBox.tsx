@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // @mui
@@ -6,7 +6,7 @@ import { Grid, Stack, Button, Popover, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 // components
-import { postCreateTimeRecord } from '../../utils/api';
+import { postCreateTimeRecord } from '../../utils/apiFacade';
 import Iconify from '../../components/iconify';
 
 // types
@@ -17,7 +17,8 @@ import { validateNewRecordInput } from '../../utils/functions';
 
 type TTimeRegistrationDialogBoxProps = {
   addTimeRecordToRegistrationList: (record: TTimeRecord[]) => void;
-  cardRef: any;
+  cardRef: MutableRefObject<null>;
+
   projectId: string;
   projectStartDate: Date;
   projectDeadline: Date;
@@ -85,7 +86,12 @@ export default function TimeRegistrationDialogBox({
         .then(() => {
           setFormDisabled(true);
           setIsSuccess(true);
-          addTimeRecordToRegistrationList([{ id: projectId, ...body }]);
+          const record: TTimeRecord = {
+            id: new Date().toISOString(),
+            startTime: body.startTime.toString(),
+            durationMinutes: body.durationMinutes,
+          };
+          addTimeRecordToRegistrationList([record]);
         })
         .catch((err) => {
           setLoading(false);
