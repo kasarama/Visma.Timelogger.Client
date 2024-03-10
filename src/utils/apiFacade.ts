@@ -33,7 +33,7 @@ const getProjectOverview = (projectId: string): Promise<AxiosResponse<TProject>>
     headers: { User: localStorage.getItem('token') },
   });
 
-export const postCreateTimeRecord = (timeRecord: TCreateTimeRecordRequest): Promise<AxiosResponse<TProject[]>> =>
+export const postCreateTimeRecord = (timeRecord: TCreateTimeRecordRequest): Promise<AxiosResponse<string>> =>
   axios.post(urlProjects.urlCreateTimeRecord, timeRecord, {
     headers: { User: localStorage.getItem('token') },
   });

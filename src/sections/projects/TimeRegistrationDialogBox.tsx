@@ -11,6 +11,7 @@ import Iconify from '../../components/iconify';
 
 // types
 import { TCreateTimeRecordRequest, TTimeRecord } from '../../types/projectTypes';
+import { AxiosResponse } from 'axios';
 
 // utils
 import { validateNewRecordInput } from '../../utils/functions';
@@ -83,11 +84,11 @@ export default function TimeRegistrationDialogBox({
         startTime: itemData.startTime ? itemData.startTime : new Date(now.getTime() + 2 * 86400000),
       };
       postCreateTimeRecord(body)
-        .then(() => {
+        .then((res: AxiosResponse<string>) => {
           setFormDisabled(true);
           setIsSuccess(true);
           const record: TTimeRecord = {
-            id: new Date().toISOString(),
+            id: res.data,
             startTime: body.startTime.toString(),
             durationMinutes: body.durationMinutes,
           };
