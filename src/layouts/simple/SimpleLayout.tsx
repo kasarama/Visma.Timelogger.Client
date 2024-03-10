@@ -24,7 +24,7 @@ export default function SimpleLayout() {
   return (
     <>
       <StyledHeader>
-        <Logo />
+        <Logo disabledLink={false} />
       </StyledHeader>
 
       <Outlet />

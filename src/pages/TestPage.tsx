@@ -24,8 +24,10 @@ const StyledContent = styled('div')(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
-
-export default function TestPage({ title }) {
+type TTestPageProps = {
+  title: string;
+};
+export default function TestPage({ title }: TTestPageProps) {
   return (
     <>
       <Helmet>

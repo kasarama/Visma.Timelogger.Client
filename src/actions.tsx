@@ -1,5 +1,7 @@
+import { TAppUser } from './types/userTypes';
+
 export const LOGIN = 'LOGIN';
-export const setUser = (user) => ({
+export const setUser = (user: TAppUser) => ({
   type: LOGIN,
   payload: user,
 });

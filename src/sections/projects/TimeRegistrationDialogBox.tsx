@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // @mui
@@ -6,16 +6,30 @@ import { Grid, Stack, Button, Popover, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 // components
-import { postCreateTimeRecord } from '../../utils/functions';
+import { postCreateTimeRecord } from '../../utils/apiFacade';
 import Iconify from '../../components/iconify';
 
+// types
+import { TCreateTimeRecordRequest, TTimeRecord } from '../../types/projectTypes';
+
+// utils
+import { validateNewRecordInput } from '../../utils/functions';
+
+type TTimeRegistrationDialogBoxProps = {
+  addTimeRecordToRegistrationList: (record: TTimeRecord[]) => void;
+  cardRef: MutableRefObject<null>;
+
+  projectId: string;
+  projectStartDate: Date;
+  projectDeadline: Date;
+};
 export default function TimeRegistrationDialogBox({
   addTimeRecordToRegistrationList,
   cardRef,
   projectId,
   projectStartDate,
   projectDeadline,
-}) {
+}: TTimeRegistrationDialogBoxProps) {
   const EMPTY_STRING = '';
   const navigate = useNavigate();
 
@@ -24,10 +38,10 @@ export default function TimeRegistrationDialogBox({
   const [loading, setLoading] = useState(false);
   const [startAddItem, setStartAddItem] = useState(false);
   const [error, setError] = useState(EMPTY_STRING);
-  const [itemData, setItemData] = useState({});
+  const [itemData, setItemData] = useState<{ durationMinutes?: number; startTime?: Date }>({});
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleOpen = (event) => {
+  const handleOpen = () => {
     setAnchorEl(cardRef.current);
     setIsSuccess(false);
     setFormDisabled(false);
@@ -40,7 +54,7 @@ export default function TimeRegistrationDialogBox({
     }
   };
 
-  const onChange = (evt) => {
+  const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setError(EMPTY_STRING);
 
     setItemData({
@@ -48,22 +62,10 @@ export default function TimeRegistrationDialogBox({
       [evt.target.id]: evt.target.value,
     });
   };
-  function isDateBetween(startDate, endDate, targetDate) {
-    return new Date(targetDate) >= new Date(startDate) && new Date(targetDate) <= new Date(endDate);
-  }
-  function isTimeDurationCorrect(duration) {
-    return duration >= 30 && duration <= 60 * 24;
-  }
 
-  const validateInput = (item) =>
-    item.durationMinutes &&
-    item.startTime &&
-    isDateBetween(projectStartDate, projectDeadline, item.startTime) &&
-    isTimeDurationCorrect(item.durationMinutes);
-
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (!validateInput(itemData)) {
+    if (!validateNewRecordInput(itemData, projectStartDate, projectDeadline)) {
       setError('Provided data is incorrect');
     } else {
       setLoading(true);
@@ -74,12 +76,22 @@ export default function TimeRegistrationDialogBox({
 
   useEffect(() => {
     if (startAddItem) {
-      const body = { projectId, ...itemData };
+      const now = new Date();
+      const body: TCreateTimeRecordRequest = {
+        projectId,
+        durationMinutes: itemData.durationMinutes ? itemData.durationMinutes : 0,
+        startTime: itemData.startTime ? itemData.startTime : new Date(now.getTime() + 2 * 86400000),
+      };
       postCreateTimeRecord(body)
         .then(() => {
           setFormDisabled(true);
           setIsSuccess(true);
-          addTimeRecordToRegistrationList([{ id: projectId, ...body }]);
+          const record: TTimeRecord = {
+            id: new Date().toISOString(),
+            startTime: body.startTime.toString(),
+            durationMinutes: body.durationMinutes,
+          };
+          addTimeRecordToRegistrationList([record]);
         })
         .catch((err) => {
           setLoading(false);
@@ -130,7 +142,7 @@ export default function TimeRegistrationDialogBox({
             type="date"
             disabled={isFormDisabled}
             id="startTime"
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               onChange(e);
             }}
             required
@@ -141,7 +153,7 @@ export default function TimeRegistrationDialogBox({
             disabled={isFormDisabled}
             type="number"
             label="Time"
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               onChange(e);
             }}
             id="durationMinutes"

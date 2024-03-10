@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 // @mui
 import {
@@ -16,21 +15,28 @@ import {
   ClickAwayListener,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+
 // components
 import { setUser, resetUser } from '../../../actions';
-import { login } from '../../../utils/functions';
+import { login } from '../../../utils/apiFacade';
 import Iconify from '../../../components/iconify';
+import { TAppUser, TLoginCredentials } from '../../../types/userTypes';
 
 // ----------------------------------------------------------------------
-LoginForm.propTypes = {
-  saveUser: PropTypes.func,
-  deleteUser: PropTypes.func,
+const EMPTY_STRING = '';
+const initCredentials: TLoginCredentials = {
+  userName: EMPTY_STRING,
+  password: EMPTY_STRING,
 };
-function LoginForm({ saveUser, deleteUser }) {
-  const EMPTY_STRING = '';
+
+type TLoginFormProps = {
+  saveUser: (user: TAppUser) => void;
+  deleteUser: () => void;
+};
+function LoginForm({ saveUser, deleteUser }: TLoginFormProps) {
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({});
+  const [credentials, setCredentials] = useState<TLoginCredentials>(initCredentials);
   const [userName, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isFormDisabled, setFormDisabled] = useState(false);
@@ -41,15 +47,15 @@ function LoginForm({ saveUser, deleteUser }) {
   const [showPassword, setShowPassword] = useState(false);
   const [openToolTip, setOpenToolTip] = useState(false);
 
-  const onChange = (evt) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setError(EMPTY_STRING);
     setCredentials({
       ...credentials,
-      [evt.target.id]: evt.target.value,
+      [event.target.id]: event.target.value,
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setError(EMPTY_STRING);
     if (!validateCredentials()) {
@@ -65,7 +71,7 @@ function LoginForm({ saveUser, deleteUser }) {
     return credentials.userName && credentials.password;
   };
   const clearData = () => {
-    setCredentials({});
+    setCredentials(initCredentials);
     setFormDisabled(false);
     setPassword(EMPTY_STRING);
     setUsername(EMPTY_STRING);
@@ -78,7 +84,7 @@ function LoginForm({ saveUser, deleteUser }) {
       login(credentials)
         .then((res) => {
           navigate('/');
-          const user = { roles: res.data.roles, userName: res.data.userName, token: res.data.token };
+          const user = { roles: res.data.roles, userName: res.data.userName, loggedIn: true };
           setFormDisabled(true);
           saveUser(user);
         })
@@ -195,8 +201,8 @@ function LoginForm({ saveUser, deleteUser }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  saveUser: (user) => dispatch(setUser(user)),
+const mapDispatchToProps = (dispatch: (action: { type: string }) => void) => ({
+  saveUser: (user: TAppUser) => dispatch(setUser(user)),
   deleteUser: () => dispatch(resetUser()),
 });
 

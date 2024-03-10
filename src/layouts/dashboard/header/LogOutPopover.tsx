@@ -1,36 +1,34 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { Dispatch } from 'redux';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { MenuItem, IconButton, Popover } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 // components
-import { logout } from '../../../utils/functions';
+import { logout } from '../../../utils/apiFacade';
 import { resetUser } from '../../../actions';
 
 // ----------------------------------------------------------------------
 
-LogOutPopover.propTypes = {
-  removeUser: PropTypes.func,
-};
-function LogOutPopover({ removeUser }) {
-  const [open, setOpen] = useState(null);
+function LogOutPopover({ removeUser }: { removeUser: () => void }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpen = (event) => {
-    setOpen(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setOpen(null);
+    setAnchorEl(null);
   };
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
-  const handleLogout = (e) => {
-    e.preventDefault();
+  const handleLogout = () => {
     logout()
       .then(() => {
-        setOpen(false);
+        setAnchorEl(null);
         removeUser();
       })
       .catch(() => removeUser());
@@ -39,7 +37,7 @@ function LogOutPopover({ removeUser }) {
   return (
     <>
       <IconButton
-        onClick={handleOpen}
+        onClick={handleClick}
         sx={{
           p: 0,
           ...(open && {
@@ -59,8 +57,9 @@ function LogOutPopover({ removeUser }) {
       </IconButton>
 
       <Popover
+        id={id}
         open={Boolean(open)}
-        anchorEl={open}
+        anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -85,7 +84,7 @@ function LogOutPopover({ removeUser }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   removeUser: () => dispatch(resetUser()),
 });
 
