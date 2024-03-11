@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -89,12 +89,12 @@ const Router = () => {
         },
       ];
     }
-    let index = [];
+    let index: RolePage[] = [];
     if (roles.length > 1) {
       index = roleIndexPage.common;
     }
     if (roles.length === 1) {
-      index = roleIndexPage[roles[0].toLowerCase()];
+      index = roleIndexPage[roles[0].toLowerCase() as keyof RoleIndexPage];
     }
 
     return [
