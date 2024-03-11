@@ -22,10 +22,10 @@ type TAppProps = {
   removeUser: () => void;
 };
 const App = ({ user, removeUser }: TAppProps) => {
-  const [ignore, setIgnore] = useState(true);
+  const [ignoreAuth, setIgnore] = useState(false);
 
   useEffect(() => {
-    if (!ignore) {
+    if (!ignoreAuth) {
       authorizeUser(user, removeUser).finally(() => {
         setIgnore(true);
       });

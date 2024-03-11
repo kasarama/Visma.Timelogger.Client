@@ -24,6 +24,7 @@ export const mockPostLogin = (url: string, credentials: TLoginCredentials) => {
     const randomInteger = Math.floor(Math.random() * 20);
     setTimeout(() => {
       if (randomInteger === 2) {
+        console.log('Mock Server Error');
         const responseData = {
           response: { message: 'Internal Server Error', status: 500, statusText: 'Internal Server Error' },
           headers: {},
@@ -31,6 +32,7 @@ export const mockPostLogin = (url: string, credentials: TLoginCredentials) => {
         };
         reject(responseData);
       } else if (users[credentials.userName] && credentials.password === credentials.userName) {
+        console.log('Mock User Logged in');
         const responseData = {
           data: {
             userName: users[credentials.userName].name,
@@ -47,6 +49,7 @@ export const mockPostLogin = (url: string, credentials: TLoginCredentials) => {
 
         resolve(responseData);
       } else {
+        console.log('Mock Login Failed');
         const responseData = {
           response: { message: 'Login failed', status: 400, statusText: 'Bad Request' },
           headers: {},
@@ -64,12 +67,14 @@ export const mockPostLogout = (url: string) => {
     const randomInteger = Math.floor(Math.random() * 20);
     setTimeout(() => {
       if (randomInteger === 2) {
+        console.log('Mock Server Error');
         const responseData = {
           response: { message: 'Internal Server Error', status: 500, statusText: 'Internal Server Error' },
           headers: {},
           config: {},
         };
         localStorage.setItem('tokenExpirationTime', '0');
+        localStorage.setItem('token', '');
         reject(responseData);
       } else {
         const responseData = {
@@ -122,7 +127,8 @@ export const mockPostAuthorize = (url: string, credentials: TAuthorizeCredential
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', new Date().getTime().toString());
+        localStorage.setItem('tokenExpirationTime', '0');
+        localStorage.setItem('token', '');
         reject(responseData);
       }
     }, 500);

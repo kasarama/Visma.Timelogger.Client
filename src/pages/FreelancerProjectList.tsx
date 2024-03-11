@@ -53,7 +53,7 @@ export default function FreelancerProjectList({ data }: TFreelancerProjectListPr
 
   const [order, setOrder] = useState<'desc' | 'asc'>('asc');
 
-  const [orderBy, setOrderBy] = useState<keyof TProject>('name');
+  const [orderBy, setOrderBy] = useState<keyof TProject>('deadline');
 
   const [filterName, setFilterName] = useState(EMPTY_STRING);
 
