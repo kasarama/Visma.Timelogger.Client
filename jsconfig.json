@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "baseUrl": "."
-  },
-  "include": ["src/**/*", "src/sections/auth/registrationOutput"],
-  "exclude": ["node_modules"]
-}

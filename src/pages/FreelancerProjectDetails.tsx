@@ -1,22 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 // @mui
-import PropTypes from 'prop-types';
 import { Box, Stack, Link, Typography, Grid, Container } from '@mui/material';
 
-import { fDate } from '../utils/formatTime';
+//types
+import { TProject } from '../types/projectTypes';
+
+import { formatDateToLocale } from '../utils/formatTime';
 import { TimeRegistrations } from '../sections/projects';
 
-FreelancerProjectDetails.propTypes = {
-  id: PropTypes.string,
-  name: PropTypes.string,
-  freelancerId: PropTypes.string,
-  customerId: PropTypes.string,
-  startTime: PropTypes.instanceOf(Date),
-  deadline: PropTypes.instanceOf(Date),
-  isActive: PropTypes.bool,
-};
-
-export default function FreelancerProjectDetails({ data }) {
+export default function FreelancerProjectDetails({ data }: { data: TProject }) {
   return (
     <>
       <Helmet>
@@ -42,10 +34,10 @@ export default function FreelancerProjectDetails({ data }) {
 
             <Box sx={{ minWidth: 240, flexGrow: 1 }}>
               <Typography variant="body1" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary', textAlign: 'right' }}>
-                Start: {fDate(data.startTime)}
+                Start: {formatDateToLocale(data.startTime)}
               </Typography>
               <Typography variant="body1" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary', textAlign: 'right' }}>
-                End: {fDate(data.deadline)}
+                End: {formatDateToLocale(data.deadline)}
               </Typography>
             </Box>
           </Stack>
@@ -55,8 +47,8 @@ export default function FreelancerProjectDetails({ data }) {
             list={data.timeRegistrations}
             isActive={data.isActive}
             projectId={data.id}
-            projectStartDate={data.startTime}
-            projectDeadline={data.deadline}
+            projectStartDate={new Date(data.startTime)}
+            projectDeadline={new Date(data.deadline)}
           />
         </Grid>
       </Container>

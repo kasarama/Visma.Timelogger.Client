@@ -2,49 +2,31 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+
 // routes
-import Router from './routes';
+import Router from './Router';
 // theme
 import ThemeProvider from './theme';
 
+// types
+import { TAppUser } from './types/userTypes';
+
 // components
 import ScrollToTop from './components/scroll-to-top';
-import { authorize, logout } from './utils/functions';
 import { resetUser } from './actions';
+import { authorizeUser } from './utils/apiFacade';
+
 // ----------------------------------------------------------------------
-App.propTypes = {
-  user: PropTypes.object,
-  removeUser: PropTypes.func,
+type TAppProps = {
+  user: TAppUser;
+  removeUser: () => void;
 };
-function App({ user, removeUser }) {
+const App = ({ user, removeUser }: TAppProps) => {
   const [ignore, setIgnore] = useState(true);
-  async function authorizeUser() {
-    if (user.loggedIn) {
-      authorize({ userName: user.userName, roles: user.roles })
-        .then((res) => {})
-        .catch((err) => {
-          logout()
-            .then((res) => {
-              removeUser();
-            })
-            .catch((err) => {
-              removeUser();
-            });
-        });
-    } else {
-      logout()
-        .then(() => {
-          removeUser();
-        })
-        .catch(() => {
-          removeUser();
-        });
-    }
-  }
+
   useEffect(() => {
     if (!ignore) {
-      authorizeUser().finally(() => {
+      authorizeUser(user, removeUser).finally(() => {
         setIgnore(true);
       });
     }
@@ -60,12 +42,12 @@ function App({ user, removeUser }) {
       </BrowserRouter>
     </HelmetProvider>
   );
-}
-const mapDispatchToProps = (dispatch) => ({
+};
+const mapDispatchToProps = (dispatch: (action: { type: string }) => void) => ({
   removeUser: () => dispatch(resetUser()),
 });
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: { loggedIn: boolean; user: TAppUser }) => ({
   user: state.user,
 });
 export default connect(mapStateToProps, mapDispatchToProps)(App);

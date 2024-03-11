@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+
 // @mui
 import {
   Button,
@@ -17,15 +18,18 @@ import {
   TablePagination,
 } from '@mui/material';
 
-import PropTypes from 'prop-types';
 // components
 
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-import { getComparator, applySortFilter, formatDateToLocale } from '../utils/functions';
+import { getComparator, applySortFilter } from '../utils/functions';
 
 // sections
 import { ProjectListHead, ProjectListToolbar } from '../sections/projects';
+import { TProject } from '../types/projectTypes';
+
+// utils
+import { formatDateToLocale } from '../utils/formatTime';
 
 // ----------------------------------------------------------------------
 
@@ -38,30 +42,18 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-FActiveProjectsPage.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      freelancerId: PropTypes.string,
-      customerId: PropTypes.string,
-      startTime: PropTypes.string,
-      deadline: PropTypes.string,
-      isActive: PropTypes.bool,
-    })
-  ),
+type TFreelancerProjectListProps = {
+  data: TProject[];
 };
 
-export default function FActiveProjectsPage({ data }) {
+export default function FreelancerProjectList({ data }: TFreelancerProjectListProps) {
   const EMPTY_STRING = '';
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState<'desc' | 'asc'>('asc');
 
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState<keyof TProject>('name');
 
   const [filterName, setFilterName] = useState(EMPTY_STRING);
 
@@ -69,33 +61,26 @@ export default function FActiveProjectsPage({ data }) {
 
   const [hideInactiveProjects, setHideInactiveProjects] = useState(false);
 
+  const selected: string[] = [];
+
   const navigate = useNavigate();
 
-  const handleRequestSort = (event, property) => {
+  const handleRequestSort = (property: keyof TProject) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = data.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByNumber = (event) => {
+  const handleFilterByName = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setPage(0);
     setFilterName(event.target.value);
   };
@@ -142,23 +127,19 @@ export default function FActiveProjectsPage({ data }) {
 
         <Card>
           <ProjectListToolbar
-            numSelected={selected.length}
             filterName={filterName}
-            onFilterName={handleFilterByNumber}
+            onFilterName={handleFilterByName}
             placeholder="Search project name..."
           />
 
-          <Scrollbar>
+          <Scrollbar sx={{}}>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
                 <ProjectListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={filteredItems.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {

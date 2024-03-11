@@ -1,26 +1,28 @@
+import { ReactElement } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
-//
+
+// types
+import { TAppUser } from './types/userTypes';
+// components
 import LoginPage from './pages/LoginPage';
 import Page401 from './pages/Page401';
 import Page403 from './pages/Page403';
 import Page404 from './pages/Page404';
 import TestPage from './pages/TestPage';
-import FreelancerProjecLisWrapper from './pages/pagewrappers/FreelancerProjecLisWrapper';
+import FreelancerProjectLisWrapper from './pages/pagewrappers/FreelancerProjectListWrapper';
 import FreelancerProjectDetailsWrapper from './pages/pagewrappers/FreelancerProjectDetailsWrapper';
 import { ProtectedRoute } from './components/protected-route';
 
 // ----------------------------------------------------------------------
 
-Router.propTypes = {
-  user: PropTypes.object,
-};
-function Router({ user }) {
+const Router = () => {
+  const user = useSelector((state: { user: TAppUser }) => state.user);
+
   const simpleLayout = {
     element: <SimpleLayout />,
     children: [
@@ -40,7 +42,19 @@ function Router({ user }) {
     ],
   };
 
-  const roleIndexPage = {
+  type RolePage = {
+    element: ReactElement;
+    path?: string;
+    index?: boolean;
+  };
+
+  type RoleIndexPage = {
+    freelancer: RolePage[];
+    customer: RolePage[];
+    common: RolePage[];
+  };
+
+  const roleIndexPage: RoleIndexPage = {
     freelancer: [
       { element: <Navigate to="/freelancer" />, index: true },
       { path: '/freelancer', element: <TestPage title={'Freelancer Start Page'} />, index: true },
@@ -61,7 +75,7 @@ function Router({ user }) {
     ],
   };
 
-  const defineIdexPageByRole = (roles) => {
+  const defineIdexPageByRole = (roles: string[]) => {
     if (!roles) {
       return [
         {
@@ -75,12 +89,12 @@ function Router({ user }) {
         },
       ];
     }
-    let index = [];
+    let index: RolePage[] = [];
     if (roles.length > 1) {
       index = roleIndexPage.common;
     }
     if (roles.length === 1) {
-      index = roleIndexPage[roles[0].toLowerCase()];
+      index = roleIndexPage[roles[0].toLowerCase() as keyof RoleIndexPage];
     }
 
     return [
@@ -93,7 +107,7 @@ function Router({ user }) {
             path: 'freelancer_projects',
             element: (
               <ProtectedRoute allowedRoles={['freelancer']}>
-                <FreelancerProjecLisWrapper />
+                <FreelancerProjectLisWrapper />
               </ProtectedRoute>
             ),
           },
@@ -140,9 +154,6 @@ function Router({ user }) {
   const routes = useRoutes(r);
 
   return routes;
-}
+};
 
-const mapStateToProps = (state) => ({
-  user: state.user,
-});
-export default connect(mapStateToProps)(Router);
+export default Router;

@@ -1,12 +1,25 @@
-const users = {
+import { TLoginCredentials, TAuthorizeCredentials } from '../types/userTypes';
+
+interface IUser {
+  name: string;
+  token: string;
+}
+
+interface IUsers {
+  [key: string]: IUser;
+}
+
+const users: IUsers = {
   freelancer1: { name: 'Magdalena', token: 'freelancer1' },
   freelancer2: { name: 'Alexandra', token: 'freelancer2' },
   customer1: { name: 'Dwayne', token: 'customer1' },
   customer2: { name: 'Adrian', token: 'customer2' },
 };
-const newExpirationTime = () => Date.now + 1000 * 60 * 20;
 
-export const mockPostLogin = (url, credentials) => {
+const newExpirationTime = () => new Number(new Date().getTime() + 1000 * 60 * 20).toString();
+
+export const mockPostLogin = (url: string, credentials: TLoginCredentials) => {
+  console.log(url);
   return new Promise((resolve, reject) => {
     const randomInteger = Math.floor(Math.random() * 20);
     setTimeout(() => {
@@ -29,7 +42,7 @@ export const mockPostLogin = (url, credentials) => {
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', newExpirationTime);
+        localStorage.setItem('tokenExpirationTime', newExpirationTime());
         localStorage.setItem('token', users[credentials.userName].token);
 
         resolve(responseData);
@@ -45,7 +58,8 @@ export const mockPostLogin = (url, credentials) => {
   });
 };
 
-export const mockPostLogout = (url) => {
+export const mockPostLogout = (url: string) => {
+  console.log(url);
   return new Promise((resolve, reject) => {
     const randomInteger = Math.floor(Math.random() * 20);
     setTimeout(() => {
@@ -55,7 +69,7 @@ export const mockPostLogout = (url) => {
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', 0);
+        localStorage.setItem('tokenExpirationTime', '0');
         reject(responseData);
       } else {
         const responseData = {
@@ -67,7 +81,7 @@ export const mockPostLogout = (url) => {
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', 0);
+        localStorage.setItem('tokenExpirationTime', '0');
         localStorage.setItem('token', '');
         resolve(responseData);
       }
@@ -75,8 +89,10 @@ export const mockPostLogout = (url) => {
   });
 };
 
-export const mockPostAuthorize = (url, credentials) => {
-  const tokenExpirationTime = +localStorage.getItem('tokenExpirationTime');
+export const mockPostAuthorize = (url: string, credentials: TAuthorizeCredentials) => {
+  console.log(url, credentials);
+
+  const tokenExpirationTime = new Number(localStorage.getItem('tokenExpirationTime'));
   return new Promise((resolve, reject) => {
     const randomInteger = Math.floor(Math.random() * 100);
     setTimeout(() => {
@@ -86,9 +102,9 @@ export const mockPostAuthorize = (url, credentials) => {
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', 0);
+        localStorage.setItem('tokenExpirationTime', '0');
         reject(responseData);
-      } else if (tokenExpirationTime > Date.now()) {
+      } else if (tokenExpirationTime > new Number(new Date().getTime())) {
         const responseData = {
           data: {
             message: 'Authorized',
@@ -98,7 +114,7 @@ export const mockPostAuthorize = (url, credentials) => {
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', newExpirationTime);
+        localStorage.setItem('tokenExpirationTime', newExpirationTime());
         resolve(responseData);
       } else {
         const responseData = {
@@ -106,7 +122,7 @@ export const mockPostAuthorize = (url, credentials) => {
           headers: {},
           config: {},
         };
-        localStorage.setItem('tokenExpirationTime', Date.now() + 0);
+        localStorage.setItem('tokenExpirationTime', new Date().getTime().toString());
         reject(responseData);
       }
     }, 500);
